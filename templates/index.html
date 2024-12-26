@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<form>
+    <label for="textbox">Enter your text:</label>
+    <input type="text" id="textbox" name="textbox">
+    <div id="displayText"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const textbox = document.getElementById('textbox');
+            const displayText = document.getElementById('displayText');
+
+            textbox.addEventListener('input', () => {
+                displayText.innerHTML = '';
+                fetch('/receive_input', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({variable: textbox.value})
+                })
+                .then(response => response.json())
+                .then(data => console.log(`${data}`))
+                .catch(error => console.error(`Error: ${error}`));
+                fetch('/send_recs')
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(item => {
+                        const element = document.createElement('p');
+                        element.textContent = `${item}`;
+                        displayText.appendChild(element);
+                    });
+                });
+            });
+        });
+    </script>
+</form>
+</body>
+</html>
